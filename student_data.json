@@ -1,0 +1,55 @@
+{
+  "studentInfo": {
+    "name": "Mr DENNIS MUUO MUTUKU",
+    "regNumber": "SCCJ/02593/2023",
+    "programme": "Bachelor of Technology (Information Technology)",
+    "yearOfStudy": "YEAR2 SEMESTER1"
+  },
+  "feesInfo": {
+    "cumulativeFees": "240, 000.00",
+    "paymentsReceived": "276, 000.00"
+  },
+  "classmates": {
+    "1": "Mr KIPROTICH KEVIN",
+    "2": "Miss TERRY MWIKALI MUSYOKI",
+    "3": "Mr LEWIS KAMAU KIMANI",
+    "4": "Mr RONNIE ONYIEGO",
+    "5": "Mr MEDRICK WACHIRA NDIRANGU",
+    "6": "Mr WILFRED KIMURA MUTAHI",
+    "7": "Miss MARGARET WAMBUI NDUTA",
+    "8": "Miss ANNA KAVULI MUOKI",
+    "9": "Mr DAVID ONYANGO ODUOR",
+    "10": "Mr ELIJAH MURATHI KARIUKI",
+    "11": "Mr O. ANTONY WEISZER OMENDA",
+    "12": "Mr WALLACE ODUOR OTIENO",
+    "13": "Mr VINCENT MACHARIA KAMAU",
+    "14": "Miss PERES MARTINA AKEYO OMONDI",
+    "15": "Mr JEFF MURIMI IRUNGU",
+    "16": "Mr AUSTINE MBOGO KINOTI",
+    "17": "Mr JABEZ ONYANGO BULUMA",
+    "18": "Miss MAGDALENE NZISA KYALO",
+    "19": "Mr OTIENO OHANGA JULIUS",
+    "20": "Mr PETER MURAGE MAINA",
+    "21": "Mr EMMANUEL IGATHE MARARO",
+    "22": "Mr ABIUD KIMUTAI BETT",
+    "23": "Mr DENNIS MUUO MUTUKU (YOU)",
+    "24": "Ms CHRISTINE GATHONI GICHARU",
+    "25": "Mr PATRICK MOGOA MINDA",
+    "26": "Ms RHOBI SHARON MOTENA",
+    "27": "Miss JANET CHEPKURUI KIPKORIR",
+    "28": "Mr PETERSON AMOS MWAURA",
+    "29": "Mr MOSES MWENDWA MWEMA",
+    "30": "Mr TEDDY KAMAMO NGURE"
+  },
+  "eLearningInfo": {
+    "email": "dennismuuo23@students.tukenya.ac.ke",
+    "password": "student321",
+    "elearningLink": "http://elearning.tukenya.ac.ke/"
+  },
+  "notices": [
+    {
+      "notice": "Notice to Students - 24th February 2025",
+      "status": "Ongoing ( remaining 7 days 21 hours 46 minutes )   |"
+    }
+  ]
+}
