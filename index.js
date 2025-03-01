@@ -2,6 +2,7 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
 const port = 3001;
+require('dotenv').config();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
