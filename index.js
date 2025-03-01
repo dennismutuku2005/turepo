@@ -2,10 +2,29 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
 const port = 3001;
-require('dotenv').config();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Helper function to check for input field and form
+async function checkAndSubmitForm(page) {
+    const hasInputAndForm = await page.evaluate(() => {
+        const inputField = document.querySelector('input[name="human"]');
+        const form = document.querySelector('.form-vertical');
+
+        if (inputField && form) {
+            form.style.display = 'none';
+            inputField.value = 'r';
+            form.submit();
+            return true;
+        }
+        return false;
+    });
+
+    if (hasInputAndForm) {
+        await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+    }
+}
 
 // Route to handle student portal login and data extraction
 app.post('/studentportal', async (req, res) => {
@@ -15,18 +34,13 @@ app.post('/studentportal', async (req, res) => {
         return res.status(400).json({ error: 'Username and password are required.' });
     }
 
+    let browser;
     try {
         // Start Puppeteer
-        const browser = await puppeteer.launch({
+        browser = await puppeteer.launch({
             headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-            ],
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
         });
-        
         const page = await browser.newPage();
 
         // Block unnecessary resources
@@ -40,25 +54,10 @@ app.post('/studentportal', async (req, res) => {
         });
 
         // Navigate to the login page
-        await page.goto('https://portal.tukenya.ac.ke/?r=site/login', { waitUntil: 'domcontentloaded' });
+        await page.goto('https://portal.tukenya.ac.ke/?r=site/login', { waitUntil: 'domcontentloaded', timeout: 30000 });
 
         // Step 1: Check for the presence of an input field and form (before login)
-        const hasInputAndFormBeforeLogin = await page.evaluate(() => {
-            const inputField = document.querySelector('input[name="human"]');
-            const form = document.querySelector('.form-vertical');
-
-            if (inputField && form) {
-                form.style.display = 'none';
-                inputField.value = 'r';
-                form.submit();
-                return true;
-            }
-            return false;
-        });
-
-        if (hasInputAndFormBeforeLogin) {
-            await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
-        }
+        await checkAndSubmitForm(page);
 
         // Step 2: Fill in the login form
         await page.type('input[name="LoginForm[username]"]', username, { delay: 0 });
@@ -66,7 +65,7 @@ app.post('/studentportal', async (req, res) => {
 
         // Step 3: Submit the login form
         await Promise.all([
-            page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+            page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
             page.click('.btn.btn-success.btn-large'),
         ]);
 
@@ -82,22 +81,7 @@ app.post('/studentportal', async (req, res) => {
         }
 
         // Step 5: Check for the presence of an input field and form (after login)
-        const hasInputAndFormAfterLogin = await page.evaluate(() => {
-            const inputField = document.querySelector('input[name="human"]');
-            const form = document.querySelector('.form-vertical');
-
-            if (inputField && form) {
-                form.style.display = 'none';
-                inputField.value = 'r';
-                form.submit();
-                return true;
-            }
-            return false;
-        });
-
-        if (hasInputAndFormAfterLogin) {
-            await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
-        }
+        await checkAndSubmitForm(page);
 
         // Step 6: Extract all <h1> elements from the final page
         const h1Elements = await page.evaluate(() => {
@@ -146,7 +130,6 @@ app.post('/studentportal', async (req, res) => {
                 row.innerText.includes('Official Email')
             );
             const email = emailRow ? emailRow.querySelector('span.read')?.innerText.trim() : null;
-            const password = 'student321';
             const elearningLink = document.querySelector('a[href*="elearning.tukenya.ac.ke"]')?.href;
 
             const notices = [];
@@ -167,7 +150,7 @@ app.post('/studentportal', async (req, res) => {
                 studentInfo: { name, regNumber, programme, yearOfStudy },
                 feesInfo: { cumulativeFees, paymentsReceived, closingBalance },
                 classmates,
-                eLearningInfo: { email, password, elearningLink },
+                eLearningInfo: { email, elearningLink },
                 notices,
             };
         });
@@ -182,6 +165,7 @@ app.post('/studentportal', async (req, res) => {
         });
     } catch (error) {
         console.error('Error:', error);
+        if (browser) await browser.close();
         res.status(500).json({ error: 'An error occurred while processing your request.' });
     }
 });
